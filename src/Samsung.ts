@@ -1,5 +1,7 @@
 import WebSocket from 'ws'
 
+import Command from './Models/Command';
+
 export default class Samsung {
 	
 	private IP_TV_HOST: string;
@@ -24,8 +26,7 @@ export default class Samsung {
 		
 		return new Promise((resolve, reject) => {
 			
-			const command =  "{\"method\":\"ms.remote.control\",\"params\":{\"Cmd\":\"Click\",\"DataOfCmd\":\"KEY_HOME\",\"Option\":\"false\",\"TypeOfRemote\":\"SendRemoteKey\"}}";
-
+			let command = new Command('ms.remote.control', 'Click', 'KEY_HOME', false, 'SendRemoteKey');
 			
 			this.WS = new WebSocket('wss://' + this.IP_TV_HOST + ':8002/api/v2/channels/samsung.remote.control?name=' + this.APP_NAME + '=&token=0000', { rejectUnauthorized: false });
 			
