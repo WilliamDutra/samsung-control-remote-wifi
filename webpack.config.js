@@ -1,4 +1,6 @@
 var path = require('path');
+var nodeExternals = require('webpack-node-externals');
+
 
 module.exports = {
 	mode: 'production',
@@ -16,5 +18,6 @@ module.exports = {
 			loader: 'ts-loader',
 			exclude: /node_modules/
 		}]
-	}
+	},
+    externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
 }
