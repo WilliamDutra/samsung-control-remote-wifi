@@ -1,6 +1,7 @@
 import WebSocket from 'ws'
 
 import Command from './Models/Command';
+import Key from './Models/Key';
 
 export default class Samsung {
 	
@@ -26,9 +27,9 @@ export default class Samsung {
 		
 		return new Promise((resolve, reject) => {
 			
-			let command = new Command('ms.remote.control', 'Click', 'KEY_HOME', false, 'SendRemoteKey');
-			
-			this.WS = new WebSocket('wss://' + this.IP_TV_HOST + ':8002/api/v2/channels/samsung.remote.control?name=' + this.APP_NAME + '=&token=0000', { rejectUnauthorized: false });
+			let command = new Command('ms.channel.connect', 'Click', 'KEY_HOME', false, 'SendRemoteKey');
+						
+			this.WS = new WebSocket('wss://' + this.IP_TV_HOST + ':8002/api/v2/channels/samsung.remote.control?name=' + this.APP_NAME + '&toke=00000', { rejectUnauthorized: false });
 			
 			this.WS.on('open', () => {
 				this.WS.send(JSON.stringify(command));
@@ -42,6 +43,7 @@ export default class Samsung {
 			});
 			
 			this.WS.on('error', (err) => {
+				this.WS.close();
 				reject(err);
 			})
 		
@@ -50,6 +52,35 @@ export default class Samsung {
 	}
 	
 	
-	
+	public sendCommand(Key: string, TokenId: string) : Promise<any> {
+		
+		let command = new Command('ms.remote.control', 'Click', 'KEY_MUTE', false, 'SendRemoteKey'); 
+		
+		return new Promise((resolve, reject) => {
+			
+			this.WS = new WebSocket('wss://' + this.IP_TV_HOST + ':8002/api/v2/channels/samsung.remote.control?name=' + this.APP_NAME + '&token=' + TokenId , { rejectUnauthorized: false });
+			
+			this.WS.on('open', () => {
+				this.WS.send(JSON.stringify(command));
+			});
+			
+			this.WS.on('message', (message) => {
+				console.log('Message: ', message.toString());
+				resolve(message);
+			});
+			
+			this.WS.on('error', (err) => {
+				console.log('Error: ', err);
+				this.WS.close();
+				reject(err);
+			});
+			
+			this.WS.on('response', (response) => {
+				resolve(response.toString());
+			});
+			
+		});
+		
+	}
 	
 }
