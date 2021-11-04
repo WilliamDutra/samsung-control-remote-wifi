@@ -2,6 +2,7 @@ import WebSocket from 'ws'
 
 import Command from './Models/Command';
 import { KEYS } from './Constantes/KEYS';
+import { CMD } from './Constantes/CMD';
 
 export default class Samsung {
 	
@@ -13,7 +14,13 @@ export default class Samsung {
 		
 	private WS: WebSocket;
 	
-	
+	/**
+	 * 
+	 * @constructor
+	 * @param {string} IP   - IP da TV
+	 * @param {string} PORT - Porta do ip da TV
+	 * @param {string} APP  - Nome do applicativo
+	 */
 	constructor(IP: string, PORT: string, APP: string){
 		this.IP_TV_HOST = IP;
 		this.APP_NAME = Buffer.from(APP).toString('base64');
@@ -23,11 +30,14 @@ export default class Samsung {
 		
 	}
 	
+	/**
+	* Método que retorna o token de autorização
+	*/
 	public getTokenId() : Promise<any> {
 		
 		return new Promise((resolve, reject) => {
 			
-			let command = new Command('ms.channel.connect', 'Click', KEYS.KEY_HOME, false, 'SendRemoteKey');
+			let command = new Command('ms.channel.connect', CMD.CLICK, KEYS.KEY_HOME, false, 'SendRemoteKey');
 						
 			this.WS = new WebSocket('wss://' + this.IP_TV_HOST + ':8002/api/v2/channels/samsung.remote.control?name=' + this.APP_NAME + '&toke=00000', { rejectUnauthorized: false });
 			
@@ -51,10 +61,15 @@ export default class Samsung {
 			
 	}
 	
-	
-	public sendCommand(Key: KEYS, TokenId: string) : Promise<any> {
+	/**
+	* Método que envia um comando para a tv
+	* @param {KEYS}    Keys   - Tecla do controle remoto
+	* @param {CMD}     Cmd    - Tipo do comando
+	* @param {TokenId} string - Token da autorização
+	*/
+	public sendCommand(Key: KEYS, Cmd: CMD, TokenId: string) : Promise<any> {
 		
-		let command = new Command('ms.remote.control', 'Click', Key, false, 'SendRemoteKey'); 
+		let command = new Command('ms.remote.control', Cmd, Key, false, 'SendRemoteKey'); 
 		
 		return new Promise((resolve, reject) => {
 			

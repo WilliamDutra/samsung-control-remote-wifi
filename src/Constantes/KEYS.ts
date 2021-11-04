@@ -1,4 +1,6 @@
 export enum KEYS {
 	KEY_HOME = 'KEY_HOME',
-	KEY_MUTE = 'KEY_MUTE'
+	KEY_MUTE = 'KEY_MUTE',
+	KEY_VOLDOWN = 'KEY_VOLDOWN',
+    KEY_VOLUP = 'KEY_VOLUP'
 }
